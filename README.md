@@ -1,6 +1,6 @@
 # covid_report
 
-> A Vue.js project dashboard to report COVID-19 stats in Thialand
+> A Vue.js project dashboard to report COVID-19 stats in Thialand useing API from https://covid19.ddc.moph.go.th/th/api
 
 ## Build Setup
 
