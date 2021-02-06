@@ -1,10 +1,10 @@
 # covid_report
 
-> A Vue.js project
+> A Vue.js project dashboard to report COVID-19 stats in Thialand
 
 ## Build Setup
 
-``` bash
+```bash
 # install dependencies
 npm install
 
