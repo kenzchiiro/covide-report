@@ -3,19 +3,19 @@
     <div class="container is-fluid">
       <div class="columns ">
         <div class="column">
-          <h1>สถิติผู้ติดเชื้อวันนี้</h1>
-        </div>
-      </div>
-      <div class="columns ">
-        <div class="column">
           <div class="card">
             <div class="card-content">
               <div class="content">
-                <h3>ติดเชื้อสะสม</h3>
+                <h3>ยอดผู้ติดเชื้อสะสมภายในประเทศ</h3>
                 <h1>
+                  <span class="icon">
+                    <i style="color:#000" class="fas fa-user"></i>
+                  </span>
                   <strong>{{ this.today["Confirmed"] }}</strong>
                 </h1>
-                <p>เพิ่มขึ้น {{ this.today["NewConfirmed"] }}</p>
+                <footer class="card-footer footer-info ">
+                  ({{ this.transformDataToday(this.today["NewConfirmed"]) }})
+                </footer>
               </div>
             </div>
           </div>
@@ -30,9 +30,14 @@
               <div class="content">
                 <h3>รักษาหายแล้ว</h3>
                 <h1>
+                  <span class="icon">
+                    <i class="fas fa-hand-holding-medical"></i>
+                  </span>
                   <strong>{{ this.today["Recovered"] }}</strong>
                 </h1>
-                <p>เพิ่มขึ้น {{ this.today["NewRecovered"] }}</p>
+                <footer class="card-footer footer-info ">
+                  ({{ this.transformDataToday(this.today["NewRecovered"]) }})
+                </footer>
               </div>
             </div>
           </div>
@@ -43,9 +48,14 @@
               <div class="content">
                 <h3>กำลังรักษา</h3>
                 <h1>
+                  <span class="icon">
+                    <i class="fas fa-hospital"></i>
+                  </span>
                   <strong>{{ this.today["Hospitalized"] }}</strong>
                 </h1>
-                <p>เพิ่มขึ้น {{ this.today["NewHospitalized"] }}</p>
+                <footer class="card-footer">
+                  ({{ this.transformDataToday(this.today["NewHospitalized"]) }})
+                </footer>
               </div>
             </div>
           </div>
@@ -56,9 +66,15 @@
               <div class="content">
                 <h3>เสียชีวิต</h3>
                 <h1>
+                  <span class="icon">
+                    <i class="fas fa-book-dead"></i>
+                  </span>
                   <strong>{{ this.today["Deaths"] }}</strong>
                 </h1>
-                <p>เพิ่มขึ้น {{ this.today["NewDeaths"] }}</p>
+
+                <footer class="card-footer">
+                  ({{ this.transformDataToday(this.today["NewDeaths"]) }})
+                </footer>
               </div>
             </div>
           </div>
@@ -66,7 +82,11 @@
       </div>
     </div>
     <br />
-    <br />
+    <div class="columns ">
+      <div class="column">
+        <p class="info">อัพเดตข้อมูลล่าสุด {{ this.today["UpdateDate"] }}</p>
+      </div>
+    </div>
     <br />
     <div class="container is-fluid">
       <vue-frappe
@@ -80,7 +100,6 @@
       >
       </vue-frappe>
       <br />
-
       <div class="columns ">
         <div class="column">
           <div class="field  center">
@@ -167,6 +186,13 @@ export default {
     prv_mo: function() {
       this.index = this.index - 1;
       // console.log(this.index)
+    },
+    transformDataToday: function(data) {
+      var result = "";
+      if (data > 0) {
+        result = "+";
+      }
+      return result + data.toString();
     }
   }
 };
@@ -207,6 +233,7 @@ function transformData(data) {
   }
   return result;
 }
+
 function month_nm(data) {
   var m = "";
   var y = "";
@@ -272,7 +299,18 @@ li {
 a {
   color: #42b983;
 }
-
+.info {
+  text-align: justify; /* For Edge */
+  -moz-text-align-last: right; /* For Firefox prior 58.0 */
+  text-align-last: right;
+  margin-right: 3em;
+  color: gray;
+  font-size: 0.75em;
+}
+.card-footer {
+  display: block;
+  border-top: 1px solid #ededed;
+}
 .button {
   min-width: 8em;
 }

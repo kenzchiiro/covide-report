@@ -6,6 +6,8 @@ import Chart from "vue2-frappe";
 import { Row, Column } from "vue-grid-responsive";
 import Buefy from "buefy";
 import "buefy/dist/buefy.css";
+import "@fortawesome/fontawesome-free/css/all.css";
+import "@fortawesome/fontawesome-free/js/all.js";
 
 Vue.component("row", Row);
 Vue.component("column", Column);
