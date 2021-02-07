@@ -9,9 +9,9 @@
                 <h3>ยอดผู้ติดเชื้อสะสมภายในประเทศ</h3>
                 <h1>
                   <span class="icon">
-                    <i style="color:#000" class="fas fa-user"></i>
+                    <i class="fas fa-user"></i>
                   </span>
-                  <strong>{{ this.today["Confirmed"] }}</strong>
+                  <strong class="bg">{{ this.today["Confirmed"] }}</strong>
                 </h1>
                 <footer class="card-footer footer-info ">
                   ({{ this.transformDataToday(this.today["NewConfirmed"]) }})
@@ -33,7 +33,7 @@
                   <span class="icon">
                     <i class="fas fa-hand-holding-medical"></i>
                   </span>
-                  <strong>{{ this.today["Recovered"] }}</strong>
+                  <strong class="bg">{{ this.today["Recovered"] }}</strong>
                 </h1>
                 <footer class="card-footer footer-info ">
                   ({{ this.transformDataToday(this.today["NewRecovered"]) }})
@@ -51,7 +51,7 @@
                   <span class="icon">
                     <i class="fas fa-hospital"></i>
                   </span>
-                  <strong>{{ this.today["Hospitalized"] }}</strong>
+                  <strong class="bg">{{ this.today["Hospitalized"] }}</strong>
                 </h1>
                 <footer class="card-footer">
                   ({{ this.transformDataToday(this.today["NewHospitalized"]) }})
@@ -69,7 +69,7 @@
                   <span class="icon">
                     <i class="fas fa-book-dead"></i>
                   </span>
-                  <strong>{{ this.today["Deaths"] }}</strong>
+                  <strong class="bg">{{ this.today["Deaths"] }}</strong>
                 </h1>
                 <footer class="card-footer">
                   ({{ this.transformDataToday(this.today["NewDeaths"]) }})
@@ -363,8 +363,12 @@ h2,
 h3,
 p {
   font-weight: normal;
-  color: #000;
+  color: #552fbc;
 }
+.bg {
+  color: #552fbc;
+}
+
 ul {
   list-style-type: none;
   padding: 0;
