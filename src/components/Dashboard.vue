@@ -80,20 +80,18 @@
         </div>
       </div>
     </div>
-    <br />
     <div class="columns ">
       <div class="column">
         <p class="info">อัพเดตข้อมูลล่าสุด {{ this.today["UpdateDate"] }}</p>
       </div>
     </div>
-    <br />
     <div class="container is-fluid">
       <vue-frappe
-        id="test"
+        id="covid"
         :labels="this.result[index]['labels']"
         title="COVID-19 TH REPORT"
         type="axis-mixed"
-        :tooltipOptions="this.test"
+        :tooltipOptions="this.config['tooltipOptions']"
         :height="300"
         :colors="['red', '#ffa3ef', 'light-blue']"
         :dataSets="this.result[index]['data']"
@@ -133,9 +131,12 @@ export default {
   name: "HelloWorld",
   data() {
     return {
-      test: {
-        formatTooltipX: d => d + "",
-        formatTooltipY: d => d + " ราย"
+      config: {
+        tooltipOptions: {
+          formatTooltipX: d => "วันที่ " + d,
+          formatTooltipY: d => d + " ราย"
+        },
+        valuesOverPoints: 1 // default: 0
       },
       today: {
         Confirmed: 0,
@@ -198,6 +199,10 @@ export default {
         {}
       );
       return response;
+    },
+    getXlabel: function(data) {
+      console.log(data);
+      return data;
     },
     next_mo: function() {
       if (this.index < this.result.length) {
@@ -404,7 +409,10 @@ a {
   border-color: lightblue;
   margin: 0.5em;
 }
-
+.title {
+  color: import#fff;
+  font-size: 1em;
+}
 .deaths {
   min-width: 12em;
   background: rgba(218, 234, 255, 0.329);
