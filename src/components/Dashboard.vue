@@ -93,7 +93,7 @@
         type="axis-mixed"
         :tooltipOptions="this.config['tooltipOptions']"
         :height="300"
-        :colors="['red', '#ffa3ef', 'light-blue']"
+        :colors="['red', 'blue', 'light-blue']"
         :dataSets="this.result[index]['data']"
       >
       </vue-frappe>
@@ -227,11 +227,12 @@ export default {
 
 function transformDataMonhtly(data) {
   let newConfirmed = [];
+  let newRecovered = [];
   let date = [];
   let labels = [];
   let result = [];
   let key = [];
-  let val = {};
+  let val = [];
   let curr_mo = "";
   let pev_mo = "";
   let total = data.Data.length - 1;
@@ -240,7 +241,8 @@ function transformDataMonhtly(data) {
     curr_mo = data.Data[i].Date.substring(0, 2);
     if (pev_mo != curr_mo) {
       val = [
-        { name: "ผู้ป่วยใหม่ยืนยัน", chartType: "bar", values: newConfirmed }
+        { name: "ผู้ป่วยใหม่", chartType: "line", values: newConfirmed },
+        { name: "รักษาหายแล้ว", chartType: "line", values: newRecovered }
       ];
       date.push(
         month_nm(
@@ -254,11 +256,13 @@ function transformDataMonhtly(data) {
       labels = [];
       date = [];
       newConfirmed = [];
+      newRecovered = [];
       pev_mo = curr_mo;
       j = i;
     }
     labels.push(data.Data[i].Date.substring(3, 5));
     newConfirmed.push(data.Data[i].NewConfirmed);
+    newRecovered.push(data.Data[i].NewRecovered);
   }
 
   let currMonthEnd = new Date(
@@ -278,6 +282,8 @@ function transformDataMonhtly(data) {
       )
     );
     newConfirmed.push(data.Data[i].NewConfirmed);
+    newRecovered.push(data.Data[i].NewRecovered);
+
     day = data.Data[i].Date.substring(3, 5);
   }
   for (let i = parseInt(day); i < parseInt(currMonthEnd.getDate()); i++) {
@@ -287,6 +293,7 @@ function transformDataMonhtly(data) {
       day = i.toString();
     }
     newConfirmed.push(0);
+    newRecovered.push(0);
     labels.push(day);
     date.push(
       month_nm(
@@ -296,7 +303,10 @@ function transformDataMonhtly(data) {
       )
     );
   }
-  val = [{ name: "ผู้ป่วยใหม่ยืนยัน", chartType: "bar", values: newConfirmed }];
+  val = [
+    { name: "ผู้ป่วยใหม่", chartType: "line", values: newConfirmed },
+    { name: "รักษาหายแล้ว", chartType: "line", values: newRecovered }
+  ];
   result.push({ date: date, labels: labels, data: val });
   return result;
 }
