@@ -71,7 +71,6 @@
                   </span>
                   <strong>{{ this.today["Deaths"] }}</strong>
                 </h1>
-
                 <footer class="card-footer">
                   ({{ this.transformDataToday(this.today["NewDeaths"]) }})
                 </footer>
@@ -94,6 +93,7 @@
         :labels="this.result[index]['labels']"
         title="COVID-19 TH REPORT"
         type="axis-mixed"
+        :tooltipOptions="this.test"
         :height="300"
         :colors="['red', '#ffa3ef', 'light-blue']"
         :dataSets="this.result[index]['data']"
@@ -103,14 +103,22 @@
       <div class="columns ">
         <div class="column">
           <div class="field  center">
-            <button class="button is-link is-light" v-on:click="prv_mo()">
-              ก่อนหน้า
+            <button
+              class="button is-link is-light"
+              v-on:click="prv_mo()"
+              :disabled="this.isDisabledPrevious_"
+            >
+              เดือนก่อนหน้า
             </button>
             <button class="button panel" disabled>
               {{ this.result[index - 1]["date"][0] }}
             </button>
-            <button class="button is-link is-light" v-on:click="next_mo()">
-              ถัดไป
+            <button
+              class="button is-link is-light"
+              v-on:click="next_mo()"
+              :disabled="this.isDisabledNext_"
+            >
+              เดือนถัดไป
             </button>
           </div>
         </div>
@@ -125,6 +133,10 @@ export default {
   name: "HelloWorld",
   data() {
     return {
+      test: {
+        formatTooltipX: d => d + "",
+        formatTooltipY: d => d + " ราย"
+      },
       today: {
         Confirmed: 0,
         Recovered: 0,
@@ -152,18 +164,26 @@ export default {
           ]
         }
       ],
-      index: 13
+      index: 14
     };
   },
   created() {
     // GET request using axios with set headers
     Promise.all([this.getHistory(), this.getToday()]).then(values => {
       //first return value
-      this.result = transformData(values[0].data);
+      this.result = transformDataMonhtly(values[0].data);
       this.today = values[1].data;
+      this.index = len(this.result);
     });
   },
-
+  computed: {
+    isDisabledNext_: function() {
+      return this.index == this.result.length - 1 ? true : false;
+    },
+    isDisabledPrevious_: function() {
+      return this.index == 1 ? true : false;
+    }
+  },
   methods: {
     async getHistory() {
       const response = await axios.get(
@@ -180,12 +200,15 @@ export default {
       return response;
     },
     next_mo: function() {
-      this.index = this.index + 1;
-      console.log(this.index);
+      if (this.index < this.result.length) {
+        this.index = this.index + 1;
+      }
     },
+
     prv_mo: function() {
-      this.index = this.index - 1;
-      // console.log(this.index)
+      if (this.index > 0) {
+        this.index = this.index - 1;
+      }
     },
     transformDataToday: function(data) {
       var result = "";
@@ -197,40 +220,79 @@ export default {
   }
 };
 
-function transformData(data) {
-  var newConfirmed = [];
-  var date = [];
-  var labels = [];
-  var result = [];
+function transformDataMonhtly(data) {
+  let newConfirmed = [];
+  let date = [];
+  let labels = [];
+  let result = [];
   let key = [];
-  var val = {};
-  var curr_mo = "";
-  var pev_mo = data.Data[0].Date.substring(0, 2);
-  var total = data.Data.length - 1;
-  for (var i in data.Data) {
+  let val = {};
+  let curr_mo = "";
+  let pev_mo = "";
+  let total = data.Data.length - 1;
+  let j = 0;
+  for (let i in data.Data) {
     curr_mo = data.Data[i].Date.substring(0, 2);
-    if (pev_mo != curr_mo || total == i) {
+    if (pev_mo != curr_mo) {
       val = [
         { name: "ผู้ป่วยใหม่ยืนยัน", chartType: "bar", values: newConfirmed }
       ];
-      if (total != i) {
-        date.push(
-          month_nm(
-            data.Data[i].Date.substring(0, 2) +
-              " " +
-              data.Data[i].Date.substring(12, 6)
-          )
-        );
-      }
+      date.push(
+        month_nm(
+          data.Data[i].Date.substring(0, 2) +
+            " " +
+            data.Data[i].Date.substring(6, 12)
+        )
+      );
+
       result.push({ date: date, labels: labels, data: val });
       labels = [];
       date = [];
       newConfirmed = [];
       pev_mo = curr_mo;
+      j = i;
     }
-    labels.push(data.Data[i].Date.substring(5, 3));
+    labels.push(data.Data[i].Date.substring(3, 5));
     newConfirmed.push(data.Data[i].NewConfirmed);
   }
+
+  let currMonthEnd = new Date(
+    parseInt(data.Data[j].Date.substring(6, 11)),
+    parseInt(data.Data[j].Date.substring(0, 2)),
+    0
+  );
+  let day = 0;
+  let totol_day = data.Data.length + parseInt(currMonthEnd.getDate());
+  for (let i = j; i < data.Data.length; i++) {
+    labels.push(data.Data[i].Date.substring(3, 5));
+    date.push(
+      month_nm(
+        data.Data[i].Date.substring(0, 2) +
+          " " +
+          data.Data[i].Date.substring(6, 12)
+      )
+    );
+    newConfirmed.push(data.Data[i].NewConfirmed);
+    day = data.Data[i].Date.substring(3, 5);
+  }
+  for (let i = parseInt(day); i < parseInt(currMonthEnd.getDate()); i++) {
+    if (i < 10) {
+      day = "0" + i.toString();
+    } else {
+      day = i.toString();
+    }
+    newConfirmed.push(0);
+    labels.push(day);
+    date.push(
+      month_nm(
+        data.Data[j].Date.substring(0, 2) +
+          " " +
+          data.Data[j].Date.substring(6, 12)
+      )
+    );
+  }
+  val = [{ name: "ผู้ป่วยใหม่ยืนยัน", chartType: "bar", values: newConfirmed }];
+  result.push({ date: date, labels: labels, data: val });
   return result;
 }
 
